@@ -1,0 +1,105 @@
+# --- Python Core ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# --- Environments ---
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# --- HPC & Profiling (Crucial for this project) ---
+*.prof
+*.lprof
+*.mprof
+*.pstats
+profile_output/
+benchmarks/
+*.dat
+
+# --- Distribution & Build ---
+build/
+dist/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- Testing & Coverage ---
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py.cover
+.hypothesis/
+.pytest_cache/
+
+# --- Jupyter Notebooks ---
+.ipynb_checkpoints
+
+# --- IDEs & Editors ---
+# VS Code
+.vscode/
+# PyCharm
+.idea/
+# Spyder
+.spyderproject
+.spyproject
+# Rope
+.ropeproject
+# Cursor
+.cursorignore
+.cursorindexingignore
+
+# --- C-Extensions & Cython ---
+cython_debug/
+
+# --- Documentation ---
+docs/_build/
+/site
+
+# --- Type Checking & Linters ---
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+
+# --- Framework Specifics ---
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+# Flask
+instance/
+.webassets-cache
+# Scrapy
+.scrapy
+
+# --- OS Specific ---
+.DS_Store
+Thumbs.db
