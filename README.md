@@ -15,10 +15,10 @@ We use this codebase as our control variable to measure the speedup achieved thr
 ## Optimization Roadmap
 We are implementing three distinct optimization levels to compare against the baseline:
 
-- [ ] **Baseline:** Pure Python implementation (Profiled with `cProfile` & `line_profiler`)
-- [ ] **Level 1 (Compilation):** JIT compilation using **Numba** or **Cython** to reduce interpreter overhead.
-- [ ] **Level 2 (GPU Acceleration):** Offloading heavy path generation to the GPU using **CUDA (Numba/CuPy)**.
-- [ ] **Level 3 (Parallelization):** Distributed workload across CPU cores using **Multiprocessing**.
+- **Baseline:** Pure Python implementation (Profiled with `cProfile` & `line_profiler`)
+- **Level 1 (Compilation):** JIT compilation using **Cython** to reduce interpreter overhead.
+- **Level 2 (GPU Acceleration):** Offloading heavy path generation to the GPU using **CUDA**.
+- **Level 3 (Parallelization):** Distributed workload across CPU cores using **Multiprocessing**.
 
 ## Tools & Libraries
 * **Profiling:** `cProfile`, `line_profiler`, `memory_profiler`
