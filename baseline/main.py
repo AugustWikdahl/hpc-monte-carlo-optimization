@@ -2,9 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from memory_profiler import profile
 
-@profile
 def mc_price_option(S0, K, r, sigma, T, M, I):
     """ Function to calculate the price of a European call option using Monte Carlo pricing method.
     Arguments:
