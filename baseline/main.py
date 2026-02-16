@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
+@profile
 def mc_price_option(S0, K, r, sigma, T, M, I):
     """ Function to calculate the price of a European call option using Monte Carlo pricing method.
     Arguments:
@@ -113,7 +114,7 @@ def main():
     print(f">> European Option with {T*12} months to maturity Value: {C0}")
     print("="*28)
 
-    plot_mc_paths(S, K, S0)
+    #plot_mc_paths(S, K, S0)
 
 if __name__ == "__main__":
     main()
