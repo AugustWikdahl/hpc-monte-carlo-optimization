@@ -1,4 +1,3 @@
-# src/baseline/benchmark.py
 import time
 import numpy as np
 import pandas as pd
@@ -8,70 +7,81 @@ import os
 from main import mc_price_option
 
 # --- Setup Output Paths ---
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-RESULTS_DIR = os.path.join(BASE_DIR, "../logs/baseline")
+FOLDER_DIR = os.path.dirname(os.path.abspath(__file__)) 
+PROJECT_ROOT = os.path.dirname(FOLDER_DIR) 
+RESULTS_DIR = os.path.join(PROJECT_ROOT, "logs", "baseline")
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
-
-# --- Experiment Settings ---
-# Varying Input Size (I)
-SCENARIOS = [10_000, 50_000, 100_000]
-M_STEPS = 1000  
-REPEATS = 5     
-
-# Fixed Constants
+# --- Fixed Constants ---
 S0, K, r, sigma, T = 100.0, 105.0, 0.05, 0.12, 0.5
+REPEATS = 5
 
-results = []
+# --- Experiment A: Varying Paths (I) ---
+I_SCENARIOS = [10_000, 25_000, 50_000, 75_000, 100_000]
+FIXED_M = 1000
 
-print(f"{'Paths (I)':<12} | {'Avg Time (s)':<15} | {'Std Dev (s)':<15}")
-print("-" * 50)
+# --- Experiment B: Varying Steps (M) ---
+M_SCENARIOS = [100, 500, 1000, 2500, 5000]
+FIXED_I = 50_000
 
-for I in SCENARIOS:
-    times = []
+def run_experiment(variable_name, scenarios, m_val, i_val):
+    print(f"\n>> Benchmarking {variable_name} Scaling...")
+    print(f"{variable_name:<12} | {'Avg Time (s)':<15} | {'Std Dev (s)':<15}")
+    print("-" * 50)
     
-    for _ in range(REPEATS):
-        start_time = time.time()
-        # We only care about execution time here
-        _ = mc_price_option(S0, K, r, sigma, T, M_STEPS, I)
-        end_time = time.time()
-        times.append(end_time - start_time)
+    exp_results = []
+    for val in scenarios:
+        # Determine current M and I based on which variable is scaling
+        current_m = val if variable_name == "M" else m_val
+        current_i = val if variable_name == "I" else i_val
+        
+        times = []
+        for _ in range(REPEATS):
+            start = time.perf_counter()
+            _ = mc_price_option(S0, K, r, sigma, T, current_m, current_i)
+            times.append(time.perf_counter() - start)
+        
+        avg_time = np.mean(times)
+        exp_results.append({
+            "Dimension": variable_name,
+            "Value": val,
+            "Avg_Time": avg_time,
+            "Std_Dev": np.std(times)
+        })
+        print(f"{val:<12} | {avg_time:<15.4f} | {np.std(times):<15.4f}")
     
-    avg_time = np.mean(times)
-    std_time = np.std(times)
-    
-    results.append({
-        "Paths": I,
-        "Avg_Time": avg_time,
-        "Std_Dev": std_time,
-        "Min_Time": np.min(times),
-        "Max_Time": np.max(times)
-    })
-    
-    print(f"{I:<12} | {avg_time:<15.4f} | {std_time:<15.4f}")
+    return exp_results
+
+# --- Execute Experiments ---
+results_i = run_experiment("I", I_SCENARIOS, FIXED_M, None)
+results_m = run_experiment("M", M_SCENARIOS, None, FIXED_I)
 
 # --- Save Data ---
+df = pd.DataFrame(results_i + results_m)
 csv_path = os.path.join(RESULTS_DIR, "baseline_benchmark.csv")
-df = pd.DataFrame(results)
 df.to_csv(csv_path, index=False)
-print(f"\nData saved to '{csv_path}'")
+print(f"\nResults saved to '{csv_path}'")
 
-# --- Generate Performance Plot ---
-plt.figure(figsize=(10, 6))
+# --- Visualization ---
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
 
-# Plot with Error Bars
-plt.errorbar(df["Paths"], df["Avg_Time"], yerr=df["Std_Dev"], 
-             fmt='-o', capsize=5, label='Baseline (Pure Python)', color='blue')
+# Plot I-Scaling
+df_i = df[df["Dimension"] == "I"]
+ax1.errorbar(df_i["Value"], df_i["Avg_Time"], yerr=df_i["Std_Dev"], fmt='-o', color='blue')
+ax1.set_title(f"I-Scaling (Fixed M={FIXED_M})")
+ax1.set_xlabel("Number of Paths (I)")
+ax1.set_ylabel("Time (s)")
+ax1.grid(True, linestyle='--')
 
-plt.title("Baseline Performance: Execution Time vs Input Size")
-plt.xlabel("Number of Paths (I)")
-plt.ylabel("Execution Time (seconds)")
-plt.grid(True, which="both", linestyle='--')
-plt.legend()
+# Plot M-Scaling
+df_m = df[df["Dimension"] == "M"]
+ax2.errorbar(df_m["Value"], df_m["Avg_Time"], yerr=df_m["Std_Dev"], fmt='-s', color='red')
+ax2.set_title(f"M-Scaling (Fixed I={FIXED_I})")
+ax2.set_xlabel("Number of Steps (M)")
+ax2.set_ylabel("Time (s)")
+ax2.grid(True, linestyle='--')
+
 plt.tight_layout()
-
-# Save Plot
 plot_path = os.path.join(RESULTS_DIR, "baseline_performance.png")
 plt.savefig(plot_path)
-print(f"Plot saved to '{plot_path}'")
-# plt.show() 
+print(f"Scaling plot saved to '{plot_path}'")
