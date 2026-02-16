@@ -16,7 +16,7 @@ We use this codebase as our control variable to measure the speedup achieved thr
 We are implementing three distinct optimization levels to compare against the baseline:
 
 - **Baseline:** Pure Python implementation (Profiled with `cProfile` & `line_profiler`)
-- **Level 1 (Compilation):** JIT compilation using **Cython** to reduce interpreter overhead.
+- **Level 1 (Compilation):** JIT compilation using **Cython/Numba** to reduce interpreter overhead.
 - **Level 2 (GPU Acceleration):** Offloading heavy path generation to the GPU using **CUDA**.
 - **Level 3 (Parallelization):** Distributed workload across CPU cores using **Multiprocessing**.
 
