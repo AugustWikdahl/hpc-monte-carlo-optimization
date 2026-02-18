@@ -8,8 +8,7 @@ from libc.stdlib cimport rand, srand, RAND_MAX
 import time
 
 # 1. C-Level Helper Function (The Box-Muller Transform)
-# This turns raw C random numbers into Gaussian distribution.
-# 'cdef' means this function is invisible to Python and has 0 call overhead.
+# This turns C random numbers into Gaussian distribution.
 cdef double c_gaussian() noexcept:
     cdef double u1 = rand() / (RAND_MAX + 1.0)
     cdef double u2 = rand() / (RAND_MAX + 1.0)
@@ -29,7 +28,6 @@ def mc_price_cython(double S0, double K, double r, double sigma, double T, int M
     cdef int i, t
     
     # 3. The Pure C Loop
-    # Now, NOTHING inside this loop touches Python. It is 100% Machine Code.
     for i in range(I):
         S = S0
         for t in range(M):
