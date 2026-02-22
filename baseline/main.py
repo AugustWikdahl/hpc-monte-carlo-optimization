@@ -22,15 +22,12 @@ def mc_price_option(S0, K, r, sigma, T, M, I):
     S = np.zeros((M + 1, I))
     S[0] = S0
 
-    # generate random monte carlo paths
     for t in range(1, M + 1):
         eps = np.random.standard_normal(I)
-        # simulate one step monte carlo paths
         S[t] = S[t - 1] * np.exp(
             (r - 0.5 * sigma ** 2) * dt + sigma * eps * np.sqrt(dt)
             )
     
-    # disounted value of the expected payoff
     C0 = np.exp(-r * T) * np.sum(np.maximum(S[-1] - K, 0)) / I
     return C0, S
 

@@ -2,23 +2,14 @@ import numpy as np
 import time
 
 def mc_price_option(S0, K, r, sigma, T, M, I):
-    """ 
-    NumPy Version using Summation Trick (Strength Reduction).
-    Reduces exp() calls from M*I to just I.
-    """
+
     dt = T / M
-    # Pre-calculate drift and volatility components
-    drift = (r - 0.5 * sigma**2) * T # Note: T used here because we sum all dt
+    drift = (r - 0.5 * sigma**2) * T
     vol_sqrt_dt = sigma * np.sqrt(dt)
     
-    # Generate all random numbers at once (Vectorized)
     eps = np.random.standard_normal((M, I))
-    
-    # The Summation Trick: sum the randoms across time steps first
-    # This replaces the iterative multiplication loop
     S_final = S0 * np.exp(drift + vol_sqrt_dt * np.sum(eps, axis=0))
     
-    # Payoff calculation
     C0 = np.exp(-r * T) * np.sum(np.maximum(S_final - K, 0)) / I
     return C0
 
