@@ -47,18 +47,15 @@ def run_experiment(variable_name, scenarios, m_val, i_val, pool):
     return exp_results
 
 if __name__ == "__main__":
-    # 1. Execute Benchmarks with persistent pool
     with mp.Pool(processes=WORKERS) as shared_pool:
         res_i = run_experiment("I", I_SCENARIOS, FIXED_M, None, shared_pool)
         res_m = run_experiment("M", M_SCENARIOS, None, FIXED_I, shared_pool)
 
-    # 2. Save CSV Data
     df = pd.DataFrame(res_i + res_m)
     csv_path = os.path.join(RESULTS_DIR, "multiprocessing_benchmark.csv")
     df.to_csv(csv_path, index=False)
     print(f"\nResults saved to '{csv_path}'")
 
-    # 3. Visualization
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
 
     # Plot I-Scaling

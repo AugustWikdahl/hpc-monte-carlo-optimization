@@ -7,17 +7,12 @@ from libc.math cimport exp, sqrt, log, cos, M_PI
 from libc.stdlib cimport rand, srand, RAND_MAX
 import time
 
-# 1. C-Level Helper Function (The Box-Muller Transform)
-# This turns C random numbers into Gaussian distribution.
 cdef double c_gaussian() noexcept:
     cdef double u1 = rand() / (RAND_MAX + 1.0)
     cdef double u2 = rand() / (RAND_MAX + 1.0)
     return sqrt(-2.0 * log(u1)) * cos(2.0 * M_PI * u2)
 
-# 2. Main Pricing Function
 def mc_price_cython(double S0, double K, double r, double sigma, double T, int M, int I):
-    
-    # Seed the C RNG so it's not the same every time
     srand( <unsigned int> time.time() )
     
     cdef double dt = T / M
@@ -27,11 +22,9 @@ def mc_price_cython(double S0, double K, double r, double sigma, double T, int M
     cdef double S, payoff, z
     cdef int i, t
     
-    # 3. The Pure C Loop
     for i in range(I):
         S = S0
         for t in range(M):
-            # We call our C helper, not NumPy
             z = c_gaussian()
             S = S * exp(drift + vol * z)
         

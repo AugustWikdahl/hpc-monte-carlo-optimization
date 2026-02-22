@@ -4,8 +4,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
-# Import the compiled Cython module
-# NOTE: You MUST run 'python setup.py build_ext --inplace' first!
 try:
     from main import mc_price_cython
 except ImportError:
@@ -36,7 +34,6 @@ def run_experiment(variable_name, scenarios, m_val, i_val):
     print("-" * 50)
     
     exp_results = []
-    # --- WARMUP (Not really necessary on Cython but lets try) ---
     _ = mc_price_cython(S0, K, r, sigma, T, 10, 10)
 
     for val in scenarios:
