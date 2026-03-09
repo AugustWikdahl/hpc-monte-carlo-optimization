@@ -16,7 +16,7 @@ Speedup measured at paths I = **100.000** and time steps M = 1000, and I = 10.00
 | **GPU (Total)** | 0.4098 | **5.49x** | 1.3165 | **4.64x** | 
 | **GPU (Exec Only)** | **0.1184** | **18.99x** | **0.5823** | **10.49x** | 
 
-> **Key finding:** Compiled scalar loops (Numba/Cython) do *not* outperform well-vectorized NumPy for this workload. NumPy delegates to optimized BLAS/LAPACK routines that already operate at near-C speed on bulk array operations. The real wins come from **algorithmic reduction** (summation trick), **parallelism** (multiprocessing), and **GPU offloading** (CuPy/CUDA achieving up to ~19x speedup).
+> **Key finding:** Compiled scalar loops (Numba/Cython) do *not* outperform well-vectorized NumPy for this workload. The real wins come from **algorithmic reduction** (summation trick), **parallelism** (multiprocessing), and **GPU offloading** (CuPy/CUDA achieving up to ~19x speedup).
 
 ## Profiling the Baseline
 
