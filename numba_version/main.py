@@ -25,3 +25,24 @@ def mc_price_numba(S0, K, r, sigma, T, M, I):
             total_payoff += payoff
             
     return (math.exp(-r * T) * total_payoff) / I
+
+def main():
+    
+    S0 = 100.0
+    K = 105.0
+    r = 0.05
+    sigma = 0.12
+    T = 0.5 # 6 months
+    M = 1000
+    I = 50_000
+
+    C0= mc_price_numba(S0, K, r, sigma, T, M, I)
+    print(f">> Initial Stock Price: {S0}")
+    print("="*28)
+    print(f">> European Option with {T*12} months to maturity Value: {C0}")
+    print("="*28)
+
+    #plot_mc_paths(S, K, S0)
+
+if __name__ == "__main__":
+    main()
