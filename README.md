@@ -8,15 +8,15 @@ Speedup measured at paths I = **100.000** and time steps M = 1000, and I = 10.00
 
 | Version | I=100k Time (s) | Speedup | M=5k Time (s) | Speedup |
 |---|---|---|---|---|
+| **Numba (Parallel prange)** | **0.2791** | **8.06x** | **0.9993** | **6.11x** |
+| **GPU (CuPy Total)** | 0.4098 | 5.49x | 1.3165 | 4.64x |
+| **Multiprocessing** | 0.5737 | 3.92x | 2.5378 | 2.41x |
+| **Summation Trick** | 1.4706 | 1.53x | 4.0529 | 1.51x |
 | **Baseline (NumPy)** | 2.2488 | 1.00x | 6.1063 | 1.00x | 
-| **Cython** | 3.8907 | 0.58x | 8.6762 | 0.70x | 
-| **Numba JIT** | 3.5817 | 0.63x | 9.0993 | 0.67x | 
-| **Summation Trick** | 1.4706 | **1.53x** | 4.0529 | **1.51x** | 
-| **Multiprocessing** | 0.5737 | **3.92x** | 2.5378 | **2.41x** | 
-| **GPU (Total)** | 0.4098 | **5.49x** | 1.3165 | **4.64x** | 
-| **GPU (Exec Only)** | **0.1184** | **18.99x** | **0.5823** | **10.49x** | 
+| **Numba (Serial)** | 3.5817 | 0.63x | 9.0993 | 0.67x | 
+| **Cython (Serial)** | 3.8907 | 0.58x | 8.6762 | 0.70x | 
 
-> **Key finding:** Compiled scalar loops (Numba/Cython) do *not* outperform well-vectorized NumPy for this workload. The real wins come from **algorithmic reduction** (summation trick), **parallelism** (multiprocessing), and **GPU offloading** (CuPy/CUDA achieving up to ~19x speedup).
+> **Key finding:** The clear winner for end-to-end execution time is Numba with `prange` for multi-threading, successfully avoiding the memory transfer bottlenecks of the GPU. Serial compiled loops (Numba/Cython without parallelism) do *not* outperform well-vectorized NumPy. The problem benefits more from parallelization when the number of paths (I) scales versus when the time steps (M) scale.
 
 ## Profiling the Baseline
 
@@ -35,7 +35,7 @@ These two lines inside the `for t in range(M)` loop account for ~100% of executi
 Exploits the additive property of log-returns: instead of computing `exp()` at every step for every path, the random increments are summed across time steps first, then a single `exp()` per path produces the final price. This reduces `M × I` calls to `exp()` down to `I`, and eliminates the time-step loop entirely.
 
 ### Numba JIT (Compilation)
-We used Numba to compile our Python code into fast machine code to see if it could beat the baseline. It turns out it couldn't. Processing the math one step at a time is much slower than NumPy's ability to handle large blocks of data all at once.
+The serial Numba version compiled scalar loops but could not beat the baseline — processing one step at a time is slower than NumPy's vectorized bulk operations. Adding `prange` for multi-threaded parallelism over the `I` paths made Numba the fastest version overall (8.06x at I=100k), outperforming even the GPU by avoiding memory transfer overhead.
 
 ### Cython (Compilation to C)
 We translated our Python code directly into C and built our own custom random number generator. Just like Numba, this version was slower than the baseline because it forces the computer to calculate the math one step at a time instead of processing it in large, efficient chunks.
