@@ -9,7 +9,7 @@ from main import mc_price_option_parallel
 # --- Setup Output Paths ---
 FOLDER_DIR = os.path.dirname(os.path.abspath(__file__)) 
 PROJECT_ROOT = os.path.dirname(FOLDER_DIR) 
-RESULTS_DIR = os.path.join(PROJECT_ROOT, "logs", "multiprocessing")
+RESULTS_DIR = os.path.join(PROJECT_ROOT, "logs", "multiprocessing_version")
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
 # --- Constants ---
