@@ -16,11 +16,9 @@ os.makedirs(RESULTS_DIR, exist_ok=True)
 S0, K, r, sigma, T = 100.0, 105.0, 0.05, 0.12, 0.5
 REPEATS = 5
 
-# --- Experiment A: Varying Paths (I) ---
 I_SCENARIOS = [10_000, 25_000, 50_000, 75_000, 100_000]
 FIXED_M = 1000
 
-# --- Experiment B: Varying Steps (M) ---
 M_SCENARIOS = [100, 500, 1000, 2500, 5000]
 FIXED_I = 50_000
 
@@ -29,10 +27,7 @@ def run_experiment(variable_name, scenarios, m_val, i_val):
     print(f"{variable_name:<12} | {'Avg Time (s)':<15} | {'Std Dev (s)':<15}")
     print("-" * 50)
     
-    # --- WARMUP---
-    # We force a compile on the very first run of the script.
     if variable_name == "I" and scenarios[0] == I_SCENARIOS[0]:
-         print("   (Compiling JIT code...)")
          _ = mc_price_numba(S0, K, r, sigma, T, 10, 10)
 
     exp_results = []

@@ -50,7 +50,5 @@ def main():
     print(f">> European Option with {T*12} months to maturity Value: {C0}")
     print("="*28)
 
-    #plot_mc_paths(S, K, S0)
-
 if __name__ == "__main__":
     main()

@@ -1,24 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-@profile
 def mc_price_option(S0, K, r, sigma, T, M, I):
-    """ Function to calculate the price of a European call option using Monte Carlo pricing method.
-    Arguments:
-        S0: [float] initial stock/index level
-        K: [float] option strike price
-        r: [float] constant risk-free short rate
-        sigma: [float] constant volatility
-        T: [float] time to maturity in years
-        M: [int] number of time steps
-        I: [int] number of paths
-    Returns:
-        C0: float estimated option value
-    """
-
-    dt = T / M                  # delta t (time step)
+    dt = T / M
     S = np.zeros((M + 1, I))
     S[0] = S0
 
@@ -33,9 +18,7 @@ def mc_price_option(S0, K, r, sigma, T, M, I):
 
 def plot_mc_paths(S, K, S0):
     final_prices = S[-1]
-    # plt.style.use('seaborn-darkgrid')
-    
-        # Create main figure and axis
+    # Create main figure and axis
     fig = plt.figure(figsize=(16, 6))
     
     # Create main axis for price paths
@@ -110,8 +93,6 @@ def main():
     print("="*28)
     print(f">> European Option with {T*12} months to maturity Value: {C0}")
     print("="*28)
-
-    #plot_mc_paths(S, K, S0)
 
 if __name__ == "__main__":
     main()
