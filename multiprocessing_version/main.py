@@ -1,7 +1,6 @@
 import numpy as np
 import multiprocessing as mp
 from functools import partial
-import importlib
 
 def mc_step_worker(I_chunk, S0, K, r, sigma, T, M):
     np.random.seed() 
@@ -18,15 +17,6 @@ def mc_step_worker(I_chunk, S0, K, r, sigma, T, M):
     
     return np.maximum(S_prev - K, 0)
 
-def _get_worker():
-    """Import mc_step_worker from the actual module file so it's picklable
-    even when the script is executed via exec() (e.g. mprof run)."""
-    try:
-        mod = importlib.import_module("main")
-    except ModuleNotFoundError:
-        mod = importlib.import_module("multiprocessing_version.main")
-    return mod.mc_step_worker
-
 def mc_price_option_parallel(S0, K, r, sigma, T, M, I, pool):
     num_processes = pool._processes
 
@@ -35,7 +25,7 @@ def mc_price_option_parallel(S0, K, r, sigma, T, M, I, pool):
     for i in range(I % num_processes):
         chunks[i] += 1
 
-    worker_func = partial(_get_worker(), S0=S0, K=K, r=r, sigma=sigma, T=T, M=M)
+    worker_func = partial(mc_step_worker, S0=S0, K=K, r=r, sigma=sigma, T=T, M=M)
     results = pool.map(worker_func, chunks)
 
     all_payoffs = np.concatenate(results)
